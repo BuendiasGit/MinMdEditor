@@ -503,3 +503,82 @@ body {
 .context-btn:hover {
   background: var(--accent-weak, rgba(120, 120, 120, 0.15));
 }
+
+/* ---- 编辑区横向右键菜单（格式工具栏） ---- */
+.editor-context-menu {
+  position: fixed;
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+}
+
+.ecm-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ecm-btn:hover {
+  background: var(--accent-weak);
+}
+
+.ecm-sep {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: var(--border);
+}
+
+/* 标题下拉：hover 展开 H1~H6 */
+.ecm-heading {
+  position: relative;
+}
+
+.ecm-heading-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  z-index: 2110;
+  min-width: 90px;
+}
+
+.ecm-heading:hover .ecm-heading-list,
+.ecm-heading:focus-within .ecm-heading-list {
+  display: block;
+}
+
+.ecm-heading-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ecm-heading-item:hover {
+  background: var(--accent-weak);
+}

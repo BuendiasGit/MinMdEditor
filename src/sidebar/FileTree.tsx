@@ -383,6 +383,7 @@ export function FileTree({ rootDir, onOpenFile, activeFile }: FileTreeProps) {
         <div
           className="context-menu"
           style={{ left: menu.x, top: menu.y }}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
           {prompt ? (

@@ -102,6 +102,10 @@ function App() {
     english: 0,
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
+  /** 编辑区右键菜单（横向格式工具栏）：null = 关闭 */
+  const [editorMenu, setEditorMenu] = useState<{ x: number; y: number } | null>(null);
+  /** 侧边栏空态（未打开文件夹）右键菜单 */
+  const [blankMenu, setBlankMenu] = useState<{ x: number; y: number } | null>(null);
 
   // ---- 编辑器 refs ----
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
@@ -292,6 +296,50 @@ function App() {
     view.dispatch(applyHeading(view.state, level));
   }, []);
 
+  /** 编辑区右键：用 marker 包裹选区（** 加粗 / * 斜体 / ~~ 删除线）。
+   *  无选区时插入一对标记，光标落在中间。 */
+  const wrapSelection = useCallback((marker: string) => {
+    const view = viewRef.current;
+    if (!view) return;
+    const { from, to } = view.state.selection.main;
+    const sel = view.state.sliceDoc(from, to);
+    view.dispatch({
+      changes: { from, to, insert: marker + sel + marker },
+      selection: { anchor: from + marker.length, head: to + marker.length },
+      userEvent: "input",
+    });
+    view.focus();
+    setEditorMenu(null);
+  }, []);
+
+  /** 编辑区右键：标题/正文命令（复用快捷键逻辑），执行后关菜单 */
+  const headingFromMenu = useCallback(
+    (level: number) => {
+      applyHeadingCmd(level);
+      viewRef.current?.focus();
+      setEditorMenu(null);
+    },
+    [applyHeadingCmd],
+  );
+
+  // 编辑区右键菜单 / 空态菜单：点击外部或 Esc 关闭
+  useEffect(() => {
+    if (!editorMenu && !blankMenu) return;
+    const close = () => {
+      setEditorMenu(null);
+      setBlankMenu(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("mousedown", close);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousedown", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [editorMenu, blankMenu]);
+
   // ---- 屏幕顶层菜单命令分发（全局只订阅一次） ----
   useEffect(() => {
     return onMenuCommand((cmd) => {
@@ -367,10 +415,36 @@ function App() {
               activeFile={currentFile}
             />
           ) : (
-            <div className="sidebar-empty">
+            <div
+              className="sidebar-empty"
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setEditorMenu(null);
+                setBlankMenu({ x: e.clientX, y: e.clientY });
+              }}
+            >
               还没有打开文件夹。
               <br />
               菜单「文件 → 打开文件夹」开始编辑。
+            </div>
+          )}
+          {/* 空态右键菜单：引导打开文件夹（无目录时无法新建） */}
+          {blankMenu && (
+            <div
+              className="context-menu"
+              style={{ left: blankMenu.x, top: blankMenu.y }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="context-item"
+                onClick={() => {
+                  setBlankMenu(null);
+                  void openFolder();
+                }}
+              >
+                打开文件夹…
+              </div>
             </div>
           )}
         </aside>
@@ -383,7 +457,54 @@ function App() {
         />
 
         <main className="editor-area">
-          <div className="editor-container" ref={editorContainerRef} />
+          {/* 编辑区右键：拦截系统菜单，弹出横向格式工具栏 */}
+          <div
+            className="editor-container"
+            ref={editorContainerRef}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              setBlankMenu(null);
+              setEditorMenu({ x: e.clientX, y: e.clientY });
+            }}
+          />
+          {/* 编辑区横向右键菜单（格式工具栏） */}
+          {editorMenu && (
+            <div
+              className="editor-context-menu"
+              style={{ left: editorMenu.x, top: editorMenu.y }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="ecm-btn" title="加粗" onClick={() => wrapSelection("**")}>
+                <b>B</b>
+              </button>
+              <button className="ecm-btn" title="斜体" onClick={() => wrapSelection("*")}>
+                <i>I</i>
+              </button>
+              <button className="ecm-btn" title="删除线" onClick={() => wrapSelection("~~")}>
+                <s>S</s>
+              </button>
+              <span className="ecm-sep" />
+              <button className="ecm-btn" onClick={() => headingFromMenu(0)}>
+                正文
+              </button>
+              {/* 标题下拉：H1 ~ H6 */}
+              <div className="ecm-heading">
+                <button className="ecm-btn">标题 ▾</button>
+                <div className="ecm-heading-list">
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                    <button
+                      key={n}
+                      className="ecm-heading-item"
+                      onClick={() => headingFromMenu(n)}
+                    >
+                      H{n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </main>
 
         {/* 设置面板遮罩（点击关闭） */}

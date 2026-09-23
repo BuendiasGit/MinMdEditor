@@ -37,6 +37,7 @@ import {
 import { applyHeading } from "./editor/headings";
 import { FileTree } from "./sidebar/FileTree";
 import { readFile, writeFile } from "./lib/fs";
+import { countWords, type WordCount } from "./lib/wordCount";
 import { onMenuCommand, setMenuItemChecked } from "./lib/menu";
 import sampleMd from "../demo/sample.md?raw";
 import {
@@ -94,6 +95,11 @@ function App() {
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState("");
   const [cursor, setCursor] = useState({ line: 1, col: 0 });
+  const [wordCount, setWordCount] = useState<WordCount>({
+    total: 0,
+    chinese: 0,
+    english: 0,
+  });
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   // ---- 编辑器 refs ----
@@ -175,6 +181,8 @@ function App() {
         t.isUserEvent("openFile"),
       );
       if (!isOpenFile) setDirty(true);
+      // 字数统计：每次内容变化重新统计（含打开文件）
+      setWordCount(countWords(update.state.doc.toString()));
     }
     if (update.docChanged || update.selectionSet) {
       const head = update.state.selection.main.head;
@@ -418,6 +426,9 @@ function App() {
       <footer className="statusbar">
         <span>{fileName ?? "未打开文件"}</span>
         <span className="statusbar-right">
+          <span>
+            总 {wordCount.total} · 中 {wordCount.chinese} · 英 {wordCount.english}
+          </span>
           <span>
             Ln {cursor.line}, Col {cursor.col}
           </span>

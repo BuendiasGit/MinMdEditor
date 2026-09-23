@@ -24,6 +24,7 @@ const HEADING_PREFIX_RE = /^(#{1,6})( |$)/;
 
 /**
  * 把选区涉及的所有行设为指定级别标题，返回一次 dispatch 用的 Transaction。
+ * level 为 0 时表示“正文”：去掉行首任何 # 标记，还原为普通段落。
  * 同一行已为该级别 → 去掉标记还原为段落（可反复切换）。
  * 导出以便单元测试（不需要 EditorView）。
  */
@@ -36,7 +37,13 @@ export function applyHeading(state: EditorState, level: number): Transaction {
     for (let n = startLine.number; n <= endLine.number; n++) {
       const line = state.doc.line(n);
       const m = line.text.match(HEADING_PREFIX_RE);
-      if (m && m[1].length === level) {
+      if (level === 0) {
+        // 正文：删除任何 "#… " 前缀
+        if (m) {
+          const removeLen = m[1].length + (m[2] === " " ? 1 : 0);
+          changes.push({ from: line.from, to: line.from + removeLen, insert: "" });
+        }
+      } else if (m && m[1].length === level) {
         // 已是同级别 → 删除 "#… " 前缀（还原为段落）
         const removeLen = m[1].length + (m[2] === " " ? 1 : 0);
         changes.push({ from: line.from, to: line.from + removeLen, insert: "" });

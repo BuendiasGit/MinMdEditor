@@ -55,36 +55,18 @@ body {
   color: var(--text);
 }
 
-.titlebar-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.titlebar-actions button {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--text);
-  background: var(--bg-sidebar);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
-}
-
-.titlebar-actions button:hover {
-  background: var(--bg-hover);
-}
-
-.titlebar-actions button:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-/* ---- 主体：侧边栏 + 编辑器 ---- */
+/* ---- 主体：文件侧边栏 + 编辑器（设置面板浮在编辑区上） ---- */
 .body {
+  position: relative;
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 0; /* 允许子元素滚动而不是撑开 */
+  transition: grid-template-columns 0.18s ease;
+}
+
+/* 侧边栏折叠：网格列收为 0，内容隐藏（保留过渡动画） */
+.app.sidebar-collapsed .body {
+  grid-template-columns: 0 1fr;
 }
 
 /* ---- 侧边栏 ---- */
@@ -92,7 +74,9 @@ body {
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 6px 0;
+  white-space: nowrap;
 }
 
 .sidebar-empty {
@@ -185,6 +169,86 @@ body {
 .statusbar-right {
   display: flex;
   gap: 12px;
+}
+
+/* ==========================================================================
+   右侧设置面板（菜单「设置 → 设置…」打开；页面上无按钮，Esc / 点遮罩关闭）
+   ========================================================================== */
+
+/* 半透明遮罩：覆盖编辑区，点击关闭面板 */
+.settings-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 10;
+}
+
+.settings-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 右侧滑出的面板本体 */
+.settings-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 264px;
+  background: var(--bg-sidebar);
+  border-left: 1px solid var(--border);
+  box-shadow: -6px 0 18px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  transform: translateX(100%);
+  transition: transform 0.18s ease;
+  z-index: 11;
+  overflow-y: auto;
+}
+
+.settings-panel.open {
+  transform: translateX(0);
+}
+
+.settings-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+/* 每行设置：左侧标签 + 右侧控件 */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.settings-label {
+  flex-shrink: 0;
+}
+
+.settings-row select {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  max-width: 150px;
+  cursor: pointer;
+}
+
+.settings-row select:focus {
+  outline: none;
+  border-color: var(--text-muted);
 }
 
 /* ==========================================================================

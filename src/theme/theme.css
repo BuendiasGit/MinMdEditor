@@ -14,6 +14,8 @@
     "Microsoft YaHei", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New",
     monospace;
+  /* 编辑器正文字体（设置面板可改；空值回退到 UI 字体栈） */
+  --editor-font: var(--font-ui);
 
   /* ---- 应用外壳（标题栏 / 侧边栏 / 状态栏） ---- */
   --bg: #ffffff; /* 应用底色 */

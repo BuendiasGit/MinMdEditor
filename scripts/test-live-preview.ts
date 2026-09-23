@@ -71,4 +71,10 @@ if (!after3.doc.toString().startsWith("### plain line")) throw new Error("FAIL: 
 const after0 = after3.update(applyHeading(after3, 3)).state;
 console.log(`  Mod-3 again: "${after0.doc.toString().trim()}"`);
 if (after0.doc.toString() !== "plain line\n") throw new Error("FAIL: 同级别未还原段落");
-console.log("OK: 标题快捷键加/换/还原全部正确");
+
+// 3b) 菜单「编辑 → 正文」（heading-0）：还原任何级别为段落
+const h2 = EditorState.create({ doc: "## headed line\n", selection: { anchor: 0 } });
+const afterBody = h2.update(applyHeading(h2, 0)).state;
+console.log(`  heading-0: "${afterBody.doc.toString().trim()}"`);
+if (afterBody.doc.toString() !== "headed line\n") throw new Error("FAIL: heading-0 未还原为正文");
+console.log("OK: 标题快捷键加/换/还原/正文全部正确");

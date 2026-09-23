@@ -43,6 +43,8 @@ export interface EditorConfig {
   theme: ThemeName;
   /** 当前打开文件所在目录（图片相对路径的解析基准） */
   baseDir: string;
+  /** 打字机模式开关（默认开启） */
+  typewriterEnabled?: boolean;
   /** ⌘S 保存回调 */
   onSave?: () => void;
   /** ⌘O 打开文件夹回调 */
@@ -67,8 +69,8 @@ export function buildExtensions(config: EditorConfig): Extension[] {
     baseDirField,
     // Live Preview 核心（StateField 提供 decorations，块级 Widget 合法）
     livePreviewField,
-    // 打字机模式（默认 30% ~ 70% 舒适区）
-    typewriter(),
+    // 打字机模式（默认 30% ~ 70% 舒适区；可在设置面板关闭）
+    ...(config.typewriterEnabled !== false ? [typewriter()] : []),
     // 编辑器主题（随 .theme-light/.theme-dark 切换）
     editorTheme(config.theme),
     // 快捷键与编辑命令

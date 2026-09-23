@@ -35,9 +35,10 @@ export function editorTheme(name: ThemeName): Extension {
       },
       /* 聚焦时不显示默认的 outline，保持极简 */
       "&.cm-focused": { outline: "none" },
-      /* 滚动容器：用 UI 字体与行高（预览文字也用同一行高） */
+      /* 滚动容器：编辑器正文用 --editor-font（设置面板可选），
+         行高来自全局变量；预览文字共用同一行高 */
       ".cm-scroller": {
-        fontFamily: "var(--font-ui)",
+        fontFamily: "var(--editor-font)",
         lineHeight: "var(--editor-line-height)",
       },
       /* 内容区：内边距 + 光标颜色 */

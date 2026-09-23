@@ -293,19 +293,25 @@ body {
   color: var(--md-quote-text);
 }
 
-/* 列表符号 Widget */
+/* 列表符号 Widget：
+   无序列表圆点后只留小间距，不占固定宽度；
+   有序列表数字右对齐、宽度按位数留量，保证 "1." 与 "10." 纵向对齐 */
 .cm-lp-list-ul,
 .cm-lp-list-ol {
   display: inline-block;
-  min-width: 1.8em;
-  margin-right: 2px;
   color: var(--md-list-marker);
   user-select: none;
   font-weight: 600;
 }
 
+.cm-lp-list-ul {
+  margin-right: 0.45em;
+}
+
 .cm-lp-list-ol {
+  min-width: 1.4em;
   text-align: right;
+  margin-right: 0.3em;
 }
 
 /* 图片 */

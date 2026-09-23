@@ -171,6 +171,11 @@ body {
   height: 100%;
 }
 
+/* 打字机跳行平滑：滚动容器原生平滑过渡，避免瞬间跳变（观感柔和） */
+.editor-container .cm-scroller {
+  scroll-behavior: smooth;
+}
+
 /* 编辑器内容左右留白（CM6 官方支持在 .cm-content 上设水平 padding） */
 .editor-container .cm-content {
   padding-left: 2rem;

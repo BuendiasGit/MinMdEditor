@@ -130,3 +130,82 @@ pub fn read_file(path: String) -> Result<String, String> {
 pub fn write_file(path: String, content: String) -> Result<(), String> {
     std::fs::write(std::path::Path::new(&path), content).map_err(|e| format!("写入文件失败: {e}"))
 }
+
+/// 在指定目录下新建一个空 Markdown 文件。
+///
+/// 右键菜单「新建文件」调用；名称由前端提供（可带 .md 后缀，
+/// 不带时自动补 .md）。同目录重名直接报错，避免静默覆盖。
+#[tauri::command]
+pub fn create_file(parent_dir: String, name: String) -> Result<(), String> {
+    let mut name = name.trim().to_string();
+    if name.is_empty() {
+        return Err("文件名不能为空".into());
+    }
+    if name.contains('/') {
+        return Err("文件名不能包含 /".into());
+    }
+    if !is_markdown(&name) {
+        name.push_str(".md");
+    }
+    let path = std::path::Path::new(&parent_dir).join(&name);
+    if path.exists() {
+        return Err(format!("已存在同名文件: {name}"));
+    }
+    std::fs::write(&path, "").map_err(|e| format!("创建文件失败: {e}"))
+}
+
+/// 在指定目录下新建一个文件夹。
+///
+/// 右键菜单「新建文件夹」调用；同目录重名报错。
+#[tauri::command]
+pub fn create_folder(parent_dir: String, name: String) -> Result<(), String> {
+    let name = name.trim().to_string();
+    if name.is_empty() {
+        return Err("文件夹名不能为空".into());
+    }
+    if name.contains('/') {
+        return Err("文件夹名不能包含 /".into());
+    }
+    let path = std::path::Path::new(&parent_dir).join(&name);
+    if path.exists() {
+        return Err(format!("已存在同名文件夹: {name}"));
+    }
+    std::fs::create_dir(&path).map_err(|e| format!("创建文件夹失败: {e}"))
+}
+
+/// 重命名文件或文件夹（只改名字，保持在原目录）。
+///
+/// 右键菜单「重命名」调用；同目录重名报错。
+#[tauri::command]
+pub fn rename_path(path: String, new_name: String) -> Result<(), String> {
+    let new_name = new_name.trim().to_string();
+    if new_name.is_empty() {
+        return Err("名称不能为空".into());
+    }
+    if new_name.contains('/') {
+        return Err("名称不能包含 /".into());
+    }
+    let old = std::path::Path::new(&path);
+    let parent = old.parent().ok_or("无法确定父目录")?;
+    let new_path = parent.join(&new_name);
+    if new_path.exists() {
+        return Err(format!("已存在同名条目: {new_name}"));
+    }
+    std::fs::rename(old, &new_path).map_err(|e| format!("重命名失败: {e}"))
+}
+
+/// 删除文件或文件夹（文件夹递归删除）。
+///
+/// 右键菜单「删除」调用；前端已用确认框二次确认，这里直接执行。
+#[tauri::command]
+pub fn delete_path(path: String) -> Result<(), String> {
+    let p = std::path::Path::new(&path);
+    if !p.exists() {
+        return Err(format!("条目不存在: {path}"));
+    }
+    if p.is_dir() {
+        std::fs::remove_dir_all(p).map_err(|e| format!("删除文件夹失败: {e}"))
+    } else {
+        std::fs::remove_file(p).map_err(|e| format!("删除文件失败: {e}"))
+    }
+}

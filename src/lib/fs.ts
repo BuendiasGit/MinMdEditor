@@ -31,3 +31,23 @@ export function readFile(path: string): Promise<string> {
 export function writeFile(path: string, content: string): Promise<void> {
   return invoke<void>("write_file", { path, content });
 }
+
+/** 在指定目录下新建空 Markdown 文件（名称可带/不带 .md） */
+export function createFile(parentDir: string, name: string): Promise<void> {
+  return invoke<void>("create_file", { parentDir, name });
+}
+
+/** 在指定目录下新建文件夹 */
+export function createFolder(parentDir: string, name: string): Promise<void> {
+  return invoke<void>("create_folder", { parentDir, name });
+}
+
+/** 重命名文件或文件夹（保持原目录） */
+export function renamePath(path: string, newName: string): Promise<void> {
+  return invoke<void>("rename_path", { path, newName });
+}
+
+/** 删除文件或文件夹（文件夹递归删除） */
+export function deletePath(path: string): Promise<void> {
+  return invoke<void>("delete_path", { path });
+}

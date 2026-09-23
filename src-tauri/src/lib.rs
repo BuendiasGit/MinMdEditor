@@ -23,6 +23,10 @@ pub fn run() {
             commands::list_dir,
             commands::read_file,
             commands::write_file,
+            commands::create_file,
+            commands::create_folder,
+            commands::rename_path,
+            commands::delete_path,
             menu::set_menu_checked,
         ])
         .run(tauri::generate_context!())

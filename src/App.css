@@ -411,3 +411,95 @@ body {
   border-top: 1px solid var(--md-hr);
   margin: 8px 0;
 }
+
+/* ---- 侧边栏禁复制：整体不可选中，仅文件名允许复制 ---- */
+.sidebar,
+.settings-panel {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 文件名：允许选中复制（tree-name 是文件/文件夹的显示名） */
+.tree-name {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* ---- 右键菜单（自绘）：侧边栏空白/文件/文件夹右键弹出 ---- */
+.context-menu {
+  position: fixed;
+  z-index: 2000;
+  min-width: 150px;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+}
+
+.context-item {
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.context-item:hover {
+  background: var(--accent-weak, rgba(120, 120, 120, 0.15));
+}
+
+/* 输入态（新建文件/文件夹/重命名） */
+.context-prompt {
+  padding: 8px 10px 10px;
+}
+
+.context-prompt-title {
+  font-size: 12px;
+  color: var(--text-dim, var(--text));
+  margin-bottom: 6px;
+}
+
+.context-prompt-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-weak, var(--bg));
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  outline: none;
+}
+
+.context-prompt-input:focus {
+  border-color: var(--accent, #666);
+}
+
+.context-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #d33;
+}
+
+.context-prompt-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.context-btn {
+  padding: 3px 12px;
+  font-size: 12px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.context-btn:hover {
+  background: var(--accent-weak, rgba(120, 120, 120, 0.15));
+}

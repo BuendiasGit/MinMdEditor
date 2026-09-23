@@ -63,6 +63,11 @@
   --code-attr: #555555;
   --code-var: #222222;
   --code-meta: #777777;
+  /* 右键菜单等辅助色 */
+  --accent: #5b5b5b;
+  --accent-weak: rgba(120, 120, 120, 0.12);
+  --text-dim: #888;
+  --bg-weak: #f6f6f6;
 }
 
 /* 深色主题：只覆盖变量，不复制任何组件样式 */
@@ -106,5 +111,10 @@
   --code-tag: #f0f0f0;
   --code-attr: #c0c0c0;
   --code-var: #d8d8d8;
-  --code-meta: #999999;
+  --code-meta: #999999;  /* 右键菜单等辅助色 */
+  --accent: #a8a8a8;
+  --accent-weak: rgba(255, 255, 255, 0.10);
+  --text-dim: #9a9a9a;
+  --bg-weak: #2a2a2a;
+
 }

@@ -360,7 +360,7 @@ function App() {
 
   return (
     <div
-      className={`app theme-${theme}${settings.sidebarCollapsed ? " sidebar-collapsed" : ""}`}
+      className={`app theme-${theme}${settings.sidebarCollapsed ? " sidebar-collapsed" : ""}${settings.typewriterEnabled ? "" : " typewriter-off"}`}
     >
       {/* 标题栏（可拖拽窗口；页面上无任何按钮，操作全部走菜单） */}
       <header className="titlebar" data-tauri-drag-region>

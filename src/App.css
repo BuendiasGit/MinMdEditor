@@ -192,6 +192,15 @@ body {
 .editor-container .cm-content {
   padding-left: 2rem;
   padding-right: 2rem;
+  /* 打字机模式：底部留出半屏填充，让最后一行也能滚到屏幕中间
+     （文档末尾无内容时 scrollIntoView(center) 无法把最后一行居中，
+       填充扩展了最大滚动范围；关闭打字机时通过 .typewriter-off 还原） */
+  padding-bottom: 50vh;
+}
+
+/* 打字机关闭时：去掉底部填充，滚动到底即正文末尾 */
+.app.typewriter-off .editor-container .cm-content {
+  padding-bottom: 0;
 }
 
 /* ---- 状态栏 ---- */

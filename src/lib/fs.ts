@@ -27,6 +27,11 @@ export function readFile(path: string): Promise<string> {
   return invoke<string>("read_file", { path });
 }
 
+/** 读取文件修改时间（Unix 毫秒），用于外部修改检测轮询 */
+export function statFile(path: string): Promise<number> {
+  return invoke<number>("stat_file", { path });
+}
+
 /** 把内容写回原文件 */
 export function writeFile(path: string, content: string): Promise<void> {
   return invoke<void>("write_file", { path, content });

@@ -122,6 +122,26 @@ pub fn read_file(path: String) -> Result<String, String> {
     std::fs::read_to_string(p).map_err(|e| format!("读取文件失败: {e}"))
 }
 
+/// 读取文件的修改时间（Unix 毫秒）。
+///
+/// 前端打开文件时记录一次，之后定时轮询：若 mtime 变化说明文件被
+/// 外部程序修改（编辑器本身不在运行、其他工具改动了文件），据此决定
+/// 是否重新加载，避免用旧内容覆盖外部修改。
+#[tauri::command]
+pub fn stat_file(path: String) -> Result<u64, String> {
+    let p = std::path::Path::new(&path);
+    let meta = p
+        .metadata()
+        .map_err(|e| format!("读取文件状态失败: {e}"))?;
+    let modified = meta
+        .modified()
+        .map_err(|e| format!("读取修改时间失败: {e}"))?;
+    let dur = modified
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_err(|e| format!("时间戳无效: {e}"))?;
+    Ok(dur.as_millis() as u64)
+}
+
 /// 把编辑器内容写回原文件。
 ///
 /// 调用方（前端）负责传入“当前打开文件”的路径，本命令不做路径改写，

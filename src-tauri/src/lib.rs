@@ -22,7 +22,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::list_dir,
             commands::read_file,
-            commands::write_file,
+            commands::write_file, stat_file,
             commands::create_file,
             commands::create_folder,
             commands::rename_path,

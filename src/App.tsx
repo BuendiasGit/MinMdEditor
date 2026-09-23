@@ -37,7 +37,7 @@ import {
 } from "./editor/setup";
 import { applyHeading } from "./editor/headings";
 import { FileTree } from "./sidebar/FileTree";
-import { readFile, writeFile } from "./lib/fs";
+import { readFile, statFile, writeFile } from "./lib/fs";
 import { countWords, type WordCount } from "./lib/wordCount";
 import { onMenuCommand, setMenuItemChecked } from "./lib/menu";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -115,6 +115,8 @@ function App() {
   /** dirty 的 ref 镜像：供窗口关闭回调（异步）读取最新值 */
   const dirtyRef = useRef(false);
   dirtyRef.current = dirty;
+  /** 当前打开文件的 mtime（外部修改检测基准） */
+  const mtimeRef = useRef(0);
   const configRef = useRef<EditorConfig | null>(null);
   // settings 的最新引用（供菜单事件回调读取，避免闭包过期）
   const settingsRef = useRef(settings);
@@ -128,6 +130,8 @@ function App() {
     try {
       await writeFile(path, view.state.doc.toString());
       setDirty(false);
+      // 保存后文件 mtime 会变化，同步基准，避免被轮询误判为外部修改
+      mtimeRef.current = await statFile(path).catch(() => mtimeRef.current);
       setStatus("已保存");
     } catch (err) {
       setStatus(`保存失败: ${err}`);
@@ -159,6 +163,7 @@ function App() {
       currentFileRef.current = path;
       setCurrentFile(path);
       setDirty(false);
+      mtimeRef.current = await statFile(path).catch(() => 0);
       setStatus(`已打开 ${basename(path)}`);
       saveLastFile(path); // 记住本次打开的文件，重启后自动恢复
       const view = viewRef.current;
@@ -202,6 +207,37 @@ function App() {
       const line = update.state.doc.lineAt(head);
       setCursor({ line: line.number, col: head - line.from });
     }
+  }, []);
+
+  // ---- 外部修改检测：定时轮询当前文件 mtime ----
+  useEffect(() => {
+    if (!("__TAURI_INTERNALS__" in window)) return;
+    const timer = setInterval(() => {
+      const path = currentFileRef.current;
+      const view = viewRef.current;
+      if (!path || !view) return;
+      void (async () => {
+        try {
+          const mtime = await statFile(path);
+          if (mtime === mtimeRef.current) return; // 无变化
+          // 文件被外部修改：
+          //   - 本地无未保存修改 → 自动重载新内容
+          //   - 本地有未保存修改 → 提示但不重载，避免覆盖本地编辑
+          if (!dirtyRef.current) {
+            const content = await readFile(path);
+            mtimeRef.current = mtime;
+            openDocument(view, content, dirname(path));
+            setDirty(false);
+            setStatus("已重载外部修改");
+          } else {
+            setStatus("文件已被外部修改（本地有未保存内容）");
+          }
+        } catch {
+          /* 文件可能被删除等瞬时情况，忽略本轮 */
+        }
+      })();
+    }, 2000);
+    return () => clearInterval(timer);
   }, []);
 
   // ---- 窗口关闭时自动保存未保存的修改（退出不丢内容） ----

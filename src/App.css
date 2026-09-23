@@ -256,10 +256,10 @@ body {
    ========================================================================== */
 
 /* 标题：字号随级别放大，行内 mark 即可撑高行盒；
-   line-height 独立收紧（正文 1.7），避免大字号把行距撑得过大 */
-.cm-lp-h1 { font-size: 1.7em; font-weight: 700; color: var(--md-heading); line-height: 1.25; }
-.cm-lp-h2 { font-size: 1.45em; font-weight: 700; color: var(--md-heading); line-height: 1.3; }
-.cm-lp-h3 { font-size: 1.25em; font-weight: 600; color: var(--md-heading); line-height: 1.3; }
+   line-height 独立收紧（正文 1.7），让标题行矮、与正文间隔小 */
+.cm-lp-h1 { font-size: 1.7em; font-weight: 700; color: var(--md-heading); line-height: 1.15; }
+.cm-lp-h2 { font-size: 1.45em; font-weight: 700; color: var(--md-heading); line-height: 1.2; }
+.cm-lp-h3 { font-size: 1.25em; font-weight: 600; color: var(--md-heading); line-height: 1.25; }
 .cm-lp-h4 { font-size: 1.15em; font-weight: 600; color: var(--md-heading); line-height: 1.3; }
 .cm-lp-h5 { font-size: 1.05em; font-weight: 600; color: var(--md-heading); line-height: 1.3; }
 .cm-lp-h6 { font-size: 1em; font-weight: 600; color: var(--md-heading); line-height: 1.3; }

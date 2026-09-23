@@ -97,6 +97,13 @@ body {
   white-space: nowrap;
 }
 
+/* 文件树容器撑满侧边栏：空白处右键全部落在容器内，
+   由自绘菜单（仅 新建文件/新建文件夹 两项）处理，不泄漏到系统菜单 */
+.file-tree {
+  min-height: 100%;
+}
+}
+
 .sidebar-empty {
   padding: 14px 16px;
   color: var(--text-muted);

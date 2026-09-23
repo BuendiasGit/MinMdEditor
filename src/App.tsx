@@ -68,24 +68,6 @@ function basename(path: string): string {
   return i >= 0 ? path.slice(i + 1) : path;
 }
 
-/**
- * 设置窗口标题（macOS Overlay 标题栏：红绿灯同一行居中显示当前文件名）。
- * 真实 Tauri 环境走 setTitle；浏览器 demo 无原生标题栏，改 document.title 便于验证。
- */
-function setWindowTitle(title: string): void {
-  if (new URLSearchParams(window.location.search).has("demo")) {
-    document.title = title;
-    return;
-  }
-  void getCurrentWebviewWindow().setTitle(title);
-}
-
-/** 文件名去掉 .md / .markdown 扩展名，用于标题栏显示 */
-function titleFromPath(path: string): string {
-  const name = basename(path).replace(/\.(md|markdown)$/i, "");
-  return name || basename(path);
-}
-
 /** 设置面板里的字体选项（存的是 CSS font-family 字符串） */
 const FONT_OPTIONS: { label: string; value: string }[] = [
   { label: "系统默认", value: "" },
@@ -166,7 +148,6 @@ function App() {
       setCurrentFile(path);
       setDirty(false);
       setStatus(`已打开 ${basename(path)}`);
-      setWindowTitle(titleFromPath(path)); // 标题栏红绿灯同行居中显示文件名
       saveLastFile(path); // 记住本次打开的文件，重启后自动恢复
       const view = viewRef.current;
       if (view) openDocument(view, content, dirname(path));
@@ -235,7 +216,6 @@ function App() {
     } else if (isDemo) {
       // 浏览器调试入口：URL 带 ?demo=1 时直接载入演示文件（无需 Tauri 环境）
       void openDocument(view, sampleMd, "");
-      setWindowTitle("demo"); // 浏览器演示：标题栏显示演示文件名
     }
 
     return () => {
@@ -248,6 +228,8 @@ function App() {
 
   // ---- 主题切换：改根元素 class + 重新装配编辑器扩展 ----
   useEffect(() => {
+    // 同步 macOS 窗口外观：深色/浅色红绿灯按钮与主题保持一致
+    if (!isDemo) void getCurrentWebviewWindow().setTheme(theme);
     if (!viewRef.current || !configRef.current) return;
     const next = { ...configRef.current, theme };
     configRef.current = next;
@@ -362,13 +344,9 @@ function App() {
     <div
       className={`app theme-${theme}${settings.sidebarCollapsed ? " sidebar-collapsed" : ""}${settings.typewriterEnabled ? "" : " typewriter-off"}`}
     >
-      {/* 标题栏（可拖拽窗口；页面上无任何按钮，操作全部走菜单） */}
-      <header className="titlebar" data-tauri-drag-region>
-        <div className="titlebar-title" data-tauri-drag-region>
-          {/* 标题栏（红绿灯同行）：显示当前文件名（去扩展名），无文件时显示应用名 */}
-          {fileName ? titleFromPath(fileName) : "MinMdEditor"}
-        </div>
-      </header>
+      {/* 透明拖拽条：无标题栏视觉，保留窗口可拖动区域；
+          macOS Overlay 红绿灯浮在其上，背景即主题色，保持简约一致 */}
+      <div className="window-drag" data-tauri-drag-region />
 
       {/* 主体：文件侧边栏 + 编辑器 + 右侧设置面板 */}
       <div className="body">

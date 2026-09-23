@@ -30,35 +30,18 @@ body {
 /* ---- 应用根：grid 三行（标题栏 / 主体 / 状态栏） ---- */
 .app {
   display: grid;
-  grid-template-rows: 44px 1fr 26px;
+  grid-template-rows: 38px 1fr 26px;
   height: 100%;
   background: var(--bg);
   color: var(--text);
   font-size: 14px;
 }
 
-/* ---- 标题栏（自定义，随主题变色；macOS Overlay 下可拖拽窗口） ---- */
-.titlebar {
-  display: flex;
-  align-items: center;
-  /* 无右侧按钮，标题占满整行；左右对称留出 macOS 红绿灯按钮空间 */
-  justify-content: flex-start;
-  padding: 0 86px; /* 左/右各 86px，与红绿灯对称，保证标题视觉居中 */
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  user-select: none;
-}
-
-.titlebar-title {
-  flex: 1; /* 占满剩余空间，文字水平居中 */
-  text-align: center;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: var(--text);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis; /* 文件名过长时省略，不挤压布局 */
+/* ---- 透明拖拽条（替代标题栏：无视觉元素，仅保留窗口拖拽能力；
+        macOS Overlay 红绿灯浮在其上，背景即 .app 的主题色） ---- */
+.window-drag {
+  height: 100%;
+  background: transparent; /* 红绿灯区域透明，颜色与主题一致 */
 }
 
 /* ---- 主体：文件侧边栏 + 侧边栏把手 + 编辑器（设置面板浮在编辑区上） ---- */

@@ -1,0 +1,108 @@
+/* ==========================================================================
+   src/theme/theme.css —— 全局主题变量（黑白两套）
+   --------------------------------------------------------------------------
+   整体架构位置：
+     这是整个应用唯一的颜色/字体/间距数据源。App.tsx 把 theme-light /
+     theme-dark 类挂在应用根元素 .app 上，所有组件（标题栏、侧边栏、
+     编辑器、状态栏、实时预览样式、代码高亮）都只引用这里的变量，
+     切换主题 = 切换根元素类名 = 所有 var() 一处生效。
+   ========================================================================== */
+
+:root {
+  /* ---- 字体 ---- */
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New",
+    monospace;
+
+  /* ---- 应用外壳（标题栏 / 侧边栏 / 状态栏） ---- */
+  --bg: #ffffff; /* 应用底色 */
+  --bg-sidebar: #f7f7f7; /* 侧边栏底色 */
+  --bg-hover: #ececec; /* 悬停底色 */
+  --bg-active: #e2e2e2; /* 选中/激活底色 */
+  --border: #d8d8d8; /* 分隔线 */
+  --text: #1a1a1a; /* 主文字 */
+  --text-muted: #767676; /* 次要文字 */
+
+  /* ---- 编辑器（CodeMirror 通过 var() 引用） ---- */
+  --editor-bg: #ffffff;
+  --editor-text: #1a1a1a;
+  --editor-active-line-bg: #f4f4f4; /* 光标行底色 */
+  --selection-bg: rgba(0, 0, 0, 0.14); /* 选区底色 */
+  --caret: #000000; /* 光标色 */
+  --editor-font-size: 15px;
+  --editor-line-height: 1.7;
+  --editor-padding: 10px 18px;
+
+  /* ---- 实时预览样式 ---- */
+  --md-heading: #111111; /* 标题文字 */
+  --md-strong: #111111; /* 加粗文字 */
+  --md-em: #333333; /* 斜体文字 */
+  --md-link: #111111; /* 链接文字（黑白主题用下划线区分） */
+  --md-code-text: #222222; /* 行内代码文字 */
+  --md-code-bg: #efefef; /* 行内代码底色 */
+  --md-codeblock-bg: #f6f6f6; /* 代码块 Widget 底色 */
+  --md-codeblock-border: #e3e3e3; /* 代码块 Widget 边框 */
+  --md-codeblock-lang: #8a8a8a; /* 代码块语言标签 */
+  --md-quote-border: #c4c4c4; /* 引用左边框 */
+  --md-quote-text: #666666; /* 引用文字 */
+  --md-list-marker: #555555; /* 列表符号 */
+  --md-hr: #cfcfcf; /* 分隔线 */
+
+  /* ---- 代码块 Widget 的语法高亮（黑白系） ---- */
+  --code-kw: #111111;
+  --code-str: #555555;
+  --code-com: #8a8a8a;
+  --code-num: #111111;
+  --code-fn: #111111;
+  --code-type: #111111;
+  --code-op: #444444;
+  --code-tag: #111111;
+  --code-attr: #555555;
+  --code-var: #222222;
+  --code-meta: #777777;
+}
+
+/* 深色主题：只覆盖变量，不复制任何组件样式 */
+.theme-dark {
+  --bg: #1e1e1e;
+  --bg-sidebar: #232323;
+  --bg-hover: #2b2b2b;
+  --bg-active: #333333;
+  --border: #3a3a3a;
+  --text: #e8e8e8;
+  --text-muted: #9a9a9a;
+
+  --editor-bg: #1e1e1e;
+  --editor-text: #e8e8e8;
+  --editor-active-line-bg: #262626;
+  --selection-bg: rgba(255, 255, 255, 0.16);
+  --caret: #ffffff;
+  --editor-padding: 10px 18px;
+
+  --md-heading: #f5f5f5;
+  --md-strong: #f5f5f5;
+  --md-em: #cfcfcf;
+  --md-link: #e8e8e8;
+  --md-code-text: #e0e0e0;
+  --md-code-bg: #2e2e2e;
+  --md-codeblock-bg: #242424;
+  --md-codeblock-border: #353535;
+  --md-codeblock-lang: #8f8f8f;
+  --md-quote-border: #5a5a5a;
+  --md-quote-text: #a8a8a8;
+  --md-list-marker: #9c9c9c;
+  --md-hr: #4a4a4a;
+
+  --code-kw: #f0f0f0;
+  --code-str: #c0c0c0;
+  --code-com: #8a8a8a;
+  --code-num: #e8e8e8;
+  --code-fn: #f0f0f0;
+  --code-type: #f0f0f0;
+  --code-op: #bbbbbb;
+  --code-tag: #f0f0f0;
+  --code-attr: #c0c0c0;
+  --code-var: #d8d8d8;
+  --code-meta: #999999;
+}

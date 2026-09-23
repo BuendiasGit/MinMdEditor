@@ -1,0 +1,299 @@
+/* ==========================================================================
+   src/App.css —— 应用布局与组件样式（含 Live Preview 预览样式）
+   --------------------------------------------------------------------------
+   整体架构位置：
+     颜色/字体/间距一律引用 src/theme/theme.css 的 CSS 变量；
+     本文件只写“布局与组件”，不定义任何色值。
+   预览样式说明：
+     .cm-lp-* 类由 editor/livePreview.ts 的 Decoration mark / Widget 添加，
+     负责把非光标行渲染成格式化文本。
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- 应用根：grid 三行（标题栏 / 主体 / 状态栏） ---- */
+.app {
+  display: grid;
+  grid-template-rows: 44px 1fr 26px;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ---- 标题栏（自定义，随主题变色；macOS Overlay 下可拖拽窗口） ---- */
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 86px; /* 左侧留出 macOS 红绿灯按钮空间 */
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+.titlebar-title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.titlebar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.titlebar-actions button {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.titlebar-actions button:hover {
+  background: var(--bg-hover);
+}
+
+.titlebar-actions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ---- 主体：侧边栏 + 编辑器 ---- */
+.body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 0; /* 允许子元素滚动而不是撑开 */
+}
+
+/* ---- 侧边栏 ---- */
+.sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.sidebar-empty {
+  padding: 14px 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 文件树行 */
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-right: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-row:hover {
+  background: var(--bg-hover);
+}
+
+.tree-row-active {
+  background: var(--bg-active);
+}
+
+.tree-arrow {
+  width: 12px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.tree-icon {
+  width: 12px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.tree-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 3px 0;
+}
+
+/* ---- 编辑器区域 ---- */
+.editor-area {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.editor-container .cm-editor {
+  height: 100%;
+}
+
+/* ---- 状态栏 ---- */
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  user-select: none;
+}
+
+.statusbar-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   Live Preview 预览样式（由 editor/livePreview.ts 的装饰类驱动）
+   ========================================================================== */
+
+/* 标题：字号随级别放大，行内 mark 即可撑高行盒 */
+.cm-lp-h1 { font-size: 1.9em; font-weight: 700; color: var(--md-heading); }
+.cm-lp-h2 { font-size: 1.6em; font-weight: 700; color: var(--md-heading); }
+.cm-lp-h3 { font-size: 1.35em; font-weight: 600; color: var(--md-heading); }
+.cm-lp-h4 { font-size: 1.2em; font-weight: 600; color: var(--md-heading); }
+.cm-lp-h5 { font-size: 1.08em; font-weight: 600; color: var(--md-heading); }
+.cm-lp-h6 { font-size: 1em; font-weight: 600; color: var(--md-heading); }
+
+/* 加粗 / 斜体（可叠加） */
+.cm-lp-strong { font-weight: 700; color: var(--md-strong); }
+.cm-lp-em { font-style: italic; color: var(--md-em); }
+
+/* 行内代码：等宽 + 底色 */
+.cm-lp-code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--md-code-bg);
+  color: var(--md-code-text);
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+}
+
+/* 链接：黑白主题下用下划线 + 加粗区分 */
+.cm-lp-link {
+  color: var(--md-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* 引用：左边框 + 弱化文字（逐行生效，视觉上形成连续竖线） */
+.cm-lp-quote {
+  border-left: 3px solid var(--md-quote-border);
+  padding-left: 10px;
+  color: var(--md-quote-text);
+}
+
+/* 列表符号 Widget */
+.cm-lp-list-ul,
+.cm-lp-list-ol {
+  display: inline-block;
+  min-width: 1.8em;
+  margin-right: 2px;
+  color: var(--md-list-marker);
+  user-select: none;
+  font-weight: 600;
+}
+
+.cm-lp-list-ol {
+  text-align: right;
+}
+
+/* 图片 */
+.cm-lp-image-wrap {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+.cm-lp-image {
+  display: block;
+  max-width: 100%;
+  max-height: 480px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.cm-lp-image-error {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* 代码块 Widget */
+.cm-lp-codeblock {
+  margin: 6px 0;
+  background: var(--md-codeblock-bg);
+  border: 1px solid var(--md-codeblock-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cm-lp-codeblock-lang {
+  font-size: 11px;
+  color: var(--md-codeblock-lang);
+  padding: 4px 12px 0;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+}
+
+.cm-lp-codeblock-pre {
+  margin: 0;
+  padding: 8px 12px 10px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--editor-text);
+}
+
+/* 分隔线 */
+.cm-lp-hr {
+  border-top: 1px solid var(--md-hr);
+  margin: 8px 0;
+}

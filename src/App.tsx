@@ -366,6 +366,13 @@ function App() {
           )}
         </aside>
 
+        {/* 侧边栏把手：分界线上的窄条，点击收起/展开侧边栏（页面上唯一的可点元素，非按钮） */}
+        <div
+          className="sidebar-toggle"
+          title={settings.sidebarCollapsed ? "展开侧边栏" : "收起侧边栏"}
+          onClick={() => setSidebarCollapsed(!settingsRef.current.sidebarCollapsed)}
+        />
+
         <main className="editor-area">
           <div className="editor-container" ref={editorContainerRef} />
         </main>

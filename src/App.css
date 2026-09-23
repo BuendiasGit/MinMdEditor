@@ -55,18 +55,47 @@ body {
   color: var(--text);
 }
 
-/* ---- 主体：文件侧边栏 + 编辑器（设置面板浮在编辑区上） ---- */
+/* ---- 主体：文件侧边栏 + 侧边栏把手 + 编辑器（设置面板浮在编辑区上） ---- */
 .body {
   position: relative;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 240px 12px 1fr;
   min-height: 0; /* 允许子元素滚动而不是撑开 */
   transition: grid-template-columns 0.18s ease;
 }
 
-/* 侧边栏折叠：网格列收为 0，内容隐藏（保留过渡动画） */
+/* 侧边栏折叠：网格列收为 0，把手列保留并移到最左侧（过渡动画） */
 .app.sidebar-collapsed .body {
-  grid-template-columns: 0 1fr;
+  grid-template-columns: 0 12px 1fr;
+}
+
+/* ---- 侧边栏把手：分界线上的窄条，可点击收起/展开。
+       展开时位于侧边栏右缘（分界线上）；收起时留在最左侧，
+       任何时候都能用这个窄条切换侧边栏 ---- */
+.sidebar-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  min-height: 0;
+  position: relative;
+  z-index: 3;
+  transition: background 0.15s ease;
+}
+.sidebar-toggle::before {
+  content: "";
+  width: 2px;
+  height: 34px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.15s ease;
+}
+.sidebar-toggle:hover {
+  background: var(--bg-hover);
+}
+.sidebar-toggle:hover::before {
+  background: var(--accent, #999999);
 }
 
 /* ---- 侧边栏 ---- */
@@ -151,6 +180,12 @@ body {
 
 .editor-container .cm-editor {
   height: 100%;
+}
+
+/* 编辑器内容左右留白（CM6 官方支持在 .cm-content 上设水平 padding） */
+.editor-container .cm-content {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 /* ---- 状态栏 ---- */
@@ -287,11 +322,16 @@ body {
   text-decoration-thickness: 1px;
 }
 
-/* 引用：细边框 + 弱化文字（逐行生效，视觉上形成连续细竖线） */
+/* 引用：细边框 + 弱化文字。
+   竖线 = border-left + box-decoration-break: clone（每个视觉行都画），
+   上下 padding 使竖线延伸到行间 leading 空隙（行内元素 padding 扩展
+   绘制区域但不撑高行盒），长文本自然换行后竖线视觉上连续成一条 */
 .cm-lp-quote {
   border-left: 2px solid var(--md-quote-border);
-  padding-left: 12px;
+  padding: 0.4em 0 0.4em 12px;
   color: var(--md-quote-text);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 /* 列表符号 Widget：

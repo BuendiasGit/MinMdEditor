@@ -345,8 +345,17 @@ function App() {
       className={`app theme-${theme}${settings.sidebarCollapsed ? " sidebar-collapsed" : ""}${settings.typewriterEnabled ? "" : " typewriter-off"}`}
     >
       {/* 透明拖拽条：无标题栏视觉，保留窗口可拖动区域；
-          macOS Overlay 红绿灯浮在其上，背景即主题色，保持简约一致 */}
-      <div className="window-drag" data-tauri-drag-region />
+          macOS Overlay 红绿灯浮在其上，背景即主题色，保持简约一致。
+          拖拽用 Tauri 官方 startDragging()（mousedown 触发），
+          比 data-tauri-drag-region 属性更可靠（Overlay 模式下属性可能失效） */}
+      <div
+        className="window-drag"
+        onMouseDown={(e) => {
+          // 左键按下即启动窗口拖拽；浏览器 demo 无原生窗口，跳过
+          if (e.button !== 0 || isDemo) return;
+          void getCurrentWebviewWindow().startDragging();
+        }}
+      />
 
       {/* 主体：文件侧边栏 + 编辑器 + 右侧设置面板 */}
       <div className="body">

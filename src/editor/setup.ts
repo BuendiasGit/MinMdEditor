@@ -69,7 +69,7 @@ export function buildExtensions(config: EditorConfig): Extension[] {
     baseDirField,
     // Live Preview 核心（StateField 提供 decorations，块级 Widget 合法）
     livePreviewField,
-    // 打字机模式（默认 30% ~ 70% 舒适区；可在设置面板关闭）
+    // 打字机模式（默认 45% ~ 55% 舒适区；可在设置面板关闭）
     ...(config.typewriterEnabled !== false ? [typewriter()] : []),
     // 编辑器主题（随 .theme-light/.theme-dark 切换）
     editorTheme(config.theme),

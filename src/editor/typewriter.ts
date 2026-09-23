@@ -10,7 +10,7 @@
 //     docChanged 且是用户输入事务；真实键盘经 CM keymap 产生
 //     userEvent "select"/"input"，程序化操作如打开文件为
 //     userEvent "openFile"，不会触发居中）；
-//   - 只在光标越出“舒适视区”（上方 30% ~ 下方 70%）时才滚动，
+//   - 只在光标越出“舒适视区”（上方 45% ~ 下方 55%）时才滚动，
 //     正常输入不打扰；
 //   - 布局读取必须延迟到 update 之后：CodeMirror 禁止在插件 update
 //     阶段同步读布局（会抛 "Reading the editor layout isn't allowed
@@ -28,19 +28,19 @@ import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
 
 export interface TypewriterOptions {
-  /** 舒适区上边界（相对视口高度），默认 0.3 */
+  /** 舒适区上边界（相对视口高度），默认 0.45 */
   topRatio?: number;
-  /** 舒适区下边界（相对视口高度），默认 0.7 */
+  /** 舒适区下边界（相对视口高度），默认 0.55 */
   bottomRatio?: number;
 }
 
 /**
  * 生成打字机模式扩展。
- * 通过 options 可以微调舒适区；默认 30% / 70%（用户方案）。
+ * 通过 options 可以微调舒适区；默认 45% / 55%（收窄的舒适带）。
  */
 export function typewriter(options: TypewriterOptions = {}): Extension {
-  const topRatio = options.topRatio ?? 0.3;
-  const bottomRatio = options.bottomRatio ?? 0.7;
+  const topRatio = options.topRatio ?? 0.45;
+  const bottomRatio = options.bottomRatio ?? 0.55;
 
   return ViewPlugin.fromClass(
     class {

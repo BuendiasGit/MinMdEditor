@@ -41,18 +41,24 @@ body {
 .titlebar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 14px 0 86px; /* 左侧留出 macOS 红绿灯按钮空间 */
+  /* 无右侧按钮，标题占满整行；左右对称留出 macOS 红绿灯按钮空间 */
+  justify-content: flex-start;
+  padding: 0 86px; /* 左/右各 86px，与红绿灯对称，保证标题视觉居中 */
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   user-select: none;
 }
 
 .titlebar-title {
+  flex: 1; /* 占满剩余空间，文字水平居中 */
+  text-align: center;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.02em;
   color: var(--text);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; /* 文件名过长时省略，不挤压布局 */
 }
 
 /* ---- 主体：文件侧边栏 + 侧边栏把手 + 编辑器（设置面板浮在编辑区上） ---- */

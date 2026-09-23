@@ -365,7 +365,8 @@ function App() {
       {/* 标题栏（可拖拽窗口；页面上无任何按钮，操作全部走菜单） */}
       <header className="titlebar" data-tauri-drag-region>
         <div className="titlebar-title" data-tauri-drag-region>
-          MinMdEditor
+          {/* 标题栏（红绿灯同行）：显示当前文件名（去扩展名），无文件时显示应用名 */}
+          {fileName ? titleFromPath(fileName) : "MinMdEditor"}
         </div>
       </header>
 

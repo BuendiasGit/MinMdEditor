@@ -46,7 +46,7 @@
   --md-codeblock-bg: #f6f6f6; /* 代码块 Widget 底色 */
   --md-codeblock-border: #e3e3e3; /* 代码块 Widget 边框 */
   --md-codeblock-lang: #8a8a8a; /* 代码块语言标签 */
-  --md-quote-border: #d5d5d5; /* 引用左边框（浅色：细而淡） */
+  --md-quote-border: #a8a8a8; /* 引用左边框（浅色：细而清晰的中灰，不过重） */
   --md-quote-text: #757575; /* 引用文字（弱化，比正文浅一档） */
   --md-list-marker: #555555; /* 列表符号 */
   --md-hr: #cfcfcf; /* 分隔线 */
@@ -91,7 +91,7 @@
   --md-codeblock-bg: #242424;
   --md-codeblock-border: #353535;
   --md-codeblock-lang: #8f8f8f;
-  --md-quote-border: #5f5f5f;
+  --md-quote-border: #6d6d6d;
   --md-quote-text: #ababab;
   --md-list-marker: #9c9c9c;
   --md-hr: #4a4a4a;

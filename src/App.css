@@ -287,10 +287,10 @@ body {
   text-decoration-thickness: 1px;
 }
 
-/* 引用：左边框 + 弱化文字（逐行生效，视觉上形成连续竖线） */
+/* 引用：细边框 + 弱化文字（逐行生效，视觉上形成连续细竖线） */
 .cm-lp-quote {
-  border-left: 3px solid var(--md-quote-border);
-  padding-left: 10px;
+  border-left: 2px solid var(--md-quote-border);
+  padding-left: 12px;
   color: var(--md-quote-text);
 }
 

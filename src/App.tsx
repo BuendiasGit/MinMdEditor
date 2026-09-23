@@ -40,6 +40,7 @@ import { FileTree } from "./sidebar/FileTree";
 import { readFile, writeFile } from "./lib/fs";
 import { countWords, type WordCount } from "./lib/wordCount";
 import { onMenuCommand, setMenuItemChecked } from "./lib/menu";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import sampleMd from "../demo/sample.md?raw";
 import {
   loadLastFile,
@@ -111,6 +112,9 @@ function App() {
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
   const viewRef = useRef<ReturnType<typeof createEditorView> | null>(null);
   const currentFileRef = useRef<string | null>(null);
+  /** dirty 的 ref 镜像：供窗口关闭回调（异步）读取最新值 */
+  const dirtyRef = useRef(false);
+  dirtyRef.current = dirty;
   const configRef = useRef<EditorConfig | null>(null);
   // settings 的最新引用（供菜单事件回调读取，避免闭包过期）
   const settingsRef = useRef(settings);
@@ -146,6 +150,10 @@ function App() {
 
   /** 打开文件：读取 → 载入编辑器 → 更新图片目录 */
   const openFile = useCallback(async (path: string) => {
+    // 有未保存修改时先自动保存当前文件，避免切换丢内容
+    if (dirtyRef.current && currentFileRef.current) {
+      await saveFile();
+    }
     try {
       const content = await readFile(path);
       currentFileRef.current = path;
@@ -195,6 +203,26 @@ function App() {
       setCursor({ line: line.number, col: head - line.from });
     }
   }, []);
+
+  // ---- 窗口关闭时自动保存未保存的修改（退出不丢内容） ----
+  useEffect(() => {
+    // demo 浏览器环境没有 Tauri window API，跳过注册
+    if (!("__TAURI_INTERNALS__" in window)) return;
+    let unlisten: (() => void) | undefined;
+    void getCurrentWindow()
+      .onCloseRequested(async (event) => {
+        if (!dirtyRef.current || !currentFileRef.current) return; // 无改动：放行默认关闭
+        event.preventDefault(); // 先阻止默认关闭，保存完成后再销毁窗口
+        await saveFile();
+        void getCurrentWindow().destroy();
+      })
+      .then((fn) => {
+        unlisten = fn;
+      });
+    return () => {
+      unlisten?.();
+    };
+  }, [saveFile]);
 
   // ---- 挂载时创建编辑器（只创建一次，主题/打字机变化走 reconfigure） ----
   useEffect(() => {

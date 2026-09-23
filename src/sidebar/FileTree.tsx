@@ -291,7 +291,9 @@ export function FileTree({ rootDir, onOpenFile, activeFile }: FileTreeProps) {
       }
       try {
         if (prompt.mode === "createFile") {
-          await createFile(prompt.dir, value);
+          // 文件名没有 .md/.markdown 后缀时自动补齐（否则文件树里看不到）
+          const finalName = /\.(md|markdown)$/i.test(value) ? value : `${value}.md`;
+          await createFile(prompt.dir, finalName);
           refreshDir(prompt.dir);
         } else if (prompt.mode === "createFolder") {
           await createFolder(prompt.dir, value);

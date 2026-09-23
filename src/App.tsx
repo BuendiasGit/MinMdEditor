@@ -26,6 +26,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { StateEffect } from "@codemirror/state";
 import type { ViewUpdate } from "@codemirror/view";
 import {
@@ -65,6 +66,24 @@ function dirname(path: string): string {
 function basename(path: string): string {
   const i = path.lastIndexOf("/");
   return i >= 0 ? path.slice(i + 1) : path;
+}
+
+/**
+ * 设置窗口标题（macOS Overlay 标题栏：红绿灯同一行居中显示当前文件名）。
+ * 真实 Tauri 环境走 setTitle；浏览器 demo 无原生标题栏，改 document.title 便于验证。
+ */
+function setWindowTitle(title: string): void {
+  if (new URLSearchParams(window.location.search).has("demo")) {
+    document.title = title;
+    return;
+  }
+  void getCurrentWebviewWindow().setTitle(title);
+}
+
+/** 文件名去掉 .md / .markdown 扩展名，用于标题栏显示 */
+function titleFromPath(path: string): string {
+  const name = basename(path).replace(/\.(md|markdown)$/i, "");
+  return name || basename(path);
 }
 
 /** 设置面板里的字体选项（存的是 CSS font-family 字符串） */
@@ -147,6 +166,7 @@ function App() {
       setCurrentFile(path);
       setDirty(false);
       setStatus(`已打开 ${basename(path)}`);
+      setWindowTitle(titleFromPath(path)); // 标题栏红绿灯同行居中显示文件名
       saveLastFile(path); // 记住本次打开的文件，重启后自动恢复
       const view = viewRef.current;
       if (view) openDocument(view, content, dirname(path));
@@ -215,6 +235,7 @@ function App() {
     } else if (isDemo) {
       // 浏览器调试入口：URL 带 ?demo=1 时直接载入演示文件（无需 Tauri 环境）
       void openDocument(view, sampleMd, "");
+      setWindowTitle("demo"); // 浏览器演示：标题栏显示演示文件名
     }
 
     return () => {
